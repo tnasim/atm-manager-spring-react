@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +30,8 @@ public class AccountController {
 
 	@Autowired
 	AccountRepository repository;
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(AccountController.class);
 
 	@GetMapping("/accounts")
 	public ResponseEntity<List<Account>> getAllAccounts(@RequestParam(required = false) String name) {
@@ -44,6 +48,7 @@ public class AccountController {
 
 			return new ResponseEntity<>(accounts, HttpStatus.OK);
 		} catch (Exception e) {
+			LOGGER.error(e.getMessage());
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
@@ -62,7 +67,7 @@ public class AccountController {
 	public ResponseEntity<Account> createAccount(@RequestBody Account account) {
 		try {
 			Account _account = repository
-					.save(new Account(account.getName(), account.getAddress()));
+					.save(new Account(account.getName(), account.getAddress(), account.getBalance()));
 			return new ResponseEntity<>(_account, HttpStatus.CREATED);
 		} catch (Exception e) {
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -71,14 +76,16 @@ public class AccountController {
 
 	@PutMapping("/accounts/{id}")
 	public ResponseEntity<Account> updateAccount(@PathVariable("id") long id, @RequestBody Account account) {
-		Optional<Account> tutorialData = repository.findById(id);
-		if (tutorialData.isPresent()) {
-			Account _account = tutorialData.get();
+		Optional<Account> accountData = repository.findById(id);
+		if (accountData.isPresent()) {
+			Account _account = accountData.get();
 			_account.setName(account.getName());
 			_account.setAddress(account.getAddress());
+			_account.setBalance(account.getBalance());
 			_account.setActive(account.isActive());
 			return new ResponseEntity<>(repository.save(_account), HttpStatus.OK);
 		} else {
+			LOGGER.debug("Account not found with ID: " + String.valueOf(id));
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
 	}
@@ -103,8 +110,8 @@ public class AccountController {
 		}
 	}
 
-	@GetMapping("/accounts/published")
-	public ResponseEntity<List<Account>> findByPublished() {
+	@GetMapping("/accounts/active")
+	public ResponseEntity<List<Account>> findByActive() {
 		try {
 			List<Account> accounts = repository.findByActive(true);
 			if (accounts.isEmpty()) {
