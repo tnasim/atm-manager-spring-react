@@ -1,7 +1,9 @@
 # ATM Account Manager Application
 
 This is a small project to demonstrate CRUD (Create, Read, Update, Delete) functionality on accounts in an ATM machine.
-It has two modules: the backend (atm) and the front-end (atm-manager-ui). The backend provides all the APIs for creating, reading, updating and deleting the accounts. The front end uses the APIs exposed by the backend and renders the UI components.
+It has two modules:
+- the backend (atm) which provides all the APIs for creating, reading, updating and deleting the accounts.
+- the front-end (atm-manager-ui) which calls the APIs exposed by the backend and renders the UI components on the web browser.
 The backend is developed using Spring-Boot, JPA and MySQL database.
 The front-end is developed using React-Redux.
 The application has been tested on Ubuntu 18.04 and Windows 10. During the installation phase (described below), select the appropriate installers for your system.
@@ -22,7 +24,7 @@ Download source code as zip file from the current [repository](https://github.co
 https://github.com/tnasim/atm-manager-spring-react.git
 ```
 
-## Running the Backend (atm)
+## Run the Backend (atm)
 
 ### Configure MySQL database
 Create a database named 'atmdb'. If you choose to use a different name, specify the name in the src\main\resources\application.properties file:
@@ -42,6 +44,97 @@ $ mvn spring-boot:run
 ```
 This will run the server on port 8080 in your localhost.
 In order to test this, you can use tools like [Postman](https://www.postman.com/).
+
+## API Endpoints and Sample Requests
+The APIs can be tested using a REST API client like Postman.
+
+### Create an Account
+- URL: http://localhost:8080/api/accounts
+- Method: POST
+- Sample Request Body (raw-JSON):
+```
+{
+    "name": "Account 1",
+    "address": "Tempe, Arizona 85281",
+    "balance": 1.0
+}
+```
+- Sample JSON Response:
+```
+{
+    "id": 1,
+    "number": "85979272",
+    "name": "Account 1",
+    "address": "Tempe, Arizona 85281",
+    "balance": 1.0,
+    "openingDate": "2022-05-04",
+    "active": false
+}
+```
+
+### Retreive ALL Accounts
+URL: http://localhost:8080/api/accounts
+Method: GET
+Sample Request Body: None
+Sample Response:
+```
+[
+    {
+        "id": 1,
+        "number": "85979272",
+        "name": "Account 1",
+        "address": "Tempe, Arizona 85281",
+        "balance": 1.0,
+        "openingDate": "2022-05-04",
+        "active": false
+    },
+    ...
+]
+```
+
+### Retreive Account by ID
+URL: http://localhost:8080/api/accounts/{ID}
+Method: GET
+Sample Request Body: None
+Sample Response:
+```
+[
+    {
+        "id": 1,
+        "number": "85979272",
+        "name": "Account 1",
+        "address": "Tempe, Arizona 85281",
+        "balance": 1.0,
+        "openingDate": "2022-05-04",
+        "active": false
+    },
+    ...
+]
+```
+
+### Update Account Information:
+- URL: http://localhost:8080/api/accounts/{ID}
+- Method: POST
+- Sample Request Body (raw-JSON):
+```
+{
+    "name": "Account 1",
+    "address": "Tempe, Arizona 85281",
+    "balance": 11.0
+}
+```
+- Sample JSON Response:
+```
+{
+    "id": 1,
+    "number": "85979272",
+    "name": "Account 1",
+    "address": "Tempe, Arizona 85281",
+    "balance": 11.0,
+    "openingDate": "2022-05-04",
+    "active": false
+}
+```
 
 ## Running the UI (atm-manager-ui)
 Run the following commands on the command line:
